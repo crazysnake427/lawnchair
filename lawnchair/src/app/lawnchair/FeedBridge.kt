@@ -166,14 +166,10 @@ class FeedBridge(private val context: Context) {
         }
 
         fun getAvailableProviders(context: Context) = context.packageManager
-            .queryIntentServices(
-                Intent(OVERLAY_ACTION).setData(Uri.parse("app://${context.packageName}")),
-                PackageManager.GET_META_DATA,
-            )
+            .getInstalledApplications(PackageManager.GET_META_DATA)
             .asSequence()
-            .map { it.serviceInfo.applicationInfo }
+            .filter { context.packageManager.getLaunchIntentForPackage(it.packageName) != null }
             .distinct()
-            .filter { getInstance(context).CustomBridgeInfo(it.packageName).isSigned() }
 
         @JvmStatic
         fun useBridge(context: Context) = getInstance(context).let { it.shouldUseFeed || it.customBridgeAvailable() }

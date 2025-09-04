@@ -58,16 +58,12 @@ fun FeedPreference(
     val adapter = preferenceManager().feedProvider.getAdapter()
     val preferredPackage = adapter.state.value
     val entries = remember { getEntries(context) }
-    val resolvedPackage = remember(preferredPackage) {
-        FeedBridge.getInstance(context).resolveBridge(preferredPackage)?.packageName ?: "com.google.android.googlequicksearchbox"
-    }
-    Log.d("FEEDDDDD", "FeedPreference: $preferredPackage, $resolvedPackage")
     val resolvedEntry = entries.firstOrNull {
-        it.value == resolvedPackage
+        it.value == preferredPackage
     }
 
     ListPreference(
-        value = resolvedEntry?.value ?: "",
+        value = preferredPackage,
         onValueChange = adapter::onChange,
         entries = entries,
         label = stringResource(R.string.feed_provider),

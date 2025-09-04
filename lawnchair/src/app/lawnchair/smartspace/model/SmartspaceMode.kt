@@ -16,6 +16,7 @@ sealed class SmartspaceMode(
             "google" -> GoogleSmartspace
             "google_search" -> GoogleSearchSmartspace
             "smartspacer" -> Smartspacer
+            "any_app" -> AnyApp
             else -> LawnchairSmartspace
         }
 
@@ -27,10 +28,19 @@ sealed class SmartspaceMode(
             GoogleSmartspace,
             GoogleSearchSmartspace,
             Smartspacer,
+            AnyApp,
         )
     }
 
     abstract fun isAvailable(context: Context): Boolean
+}
+
+object AnyApp : SmartspaceMode(
+    nameResourceId = R.string.smartspace_mode_any_app,
+    layoutResourceId = R.layout.smartspace_container,
+) {
+    override fun toString() = "any_app"
+    override fun isAvailable(context: Context): Boolean = true
 }
 
 object LawnchairSmartspace : SmartspaceMode(

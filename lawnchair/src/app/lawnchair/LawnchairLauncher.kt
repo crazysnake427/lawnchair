@@ -154,7 +154,13 @@ class LawnchairLauncher : QuickstepLauncher() {
         super.onCreate(savedInstanceState)
 
         prefs.launcherTheme.subscribeChanges(this, ::updateTheme)
-        prefs.feedProvider.subscribeChanges(this, defaultOverlay::reconnect)
+        prefs.feedProvider.subscribeChanges(this) {
+            val intent = Intent("com.android.launcher3.WINDOW_OVERLAY").setPackage(it)
+            val resolveInfo = packageManager.resolveService(intent, 0)
+            if (resolveInfo != null) {
+                defaultOverlay.reconnect()
+            }
+        }
         preferenceManager2.enableFeed.get().distinctUntilChanged().onEach { enable ->
             defaultOverlay.setEnableFeed(enable)
         }.launchIn(scope = lifecycleScope)
@@ -266,7 +272,8 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun createTouchControllers(): Array<TouchController> {
         val verticalSwipeController = VerticalSwipeTouchController(this, gestureController)
-        return arrayOf<TouchController>(verticalSwipeController) + super.createTouchControllers()
+        val feedSwipeController = app.lawnchair.gestures.FeedSwipeController(this)
+        return arrayOf<TouchController>(verticalSwipeController, feedSwipeController) + super.createTouchControllers()
     }
 
     override fun handleHomeTap() {
