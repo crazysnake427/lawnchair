@@ -88,7 +88,11 @@ allprojects {
         daggerVersion = '2.55'
 
         addFrameworkJar = { String name ->
-            def frameworkJar = new File(FRAMEWORK_PREBUILTS_DIR, name)
+            def finalName = name
+            if (name == 'framework-15.jar') {
+                finalName = 'framework-16.jar'
+            }
+            def frameworkJar = new File(FRAMEWORK_PREBUILTS_DIR, finalName)
             if (!frameworkJar.exists()) {
                 throw new IllegalArgumentException("Framework jar path ${frameworkJar.path} doesn't exist")
             }
